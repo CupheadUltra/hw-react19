@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/hw-react19/static/css/main.e6c13ad2.css",
+    "main.js": "/hw-react19/static/js/main.752c02c7.js",
+    "index.html": "/hw-react19/index.html",
+    "main.e6c13ad2.css.map": "/hw-react19/static/css/main.e6c13ad2.css.map",
+    "main.752c02c7.js.map": "/hw-react19/static/js/main.752c02c7.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e6c13ad2.css",
+    "static/js/main.752c02c7.js"
+  ]
+}
