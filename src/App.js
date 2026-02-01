@@ -1,60 +1,15 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo } from "react";
+import { useImageSearch } from "./useImageSearch";
 import Searchbar from "./components/Searchbar";
 import ImageGallery from "./components/ImageGallery";
 import Button from "./components/Button";
 import Loader from "./components/Loader";
 import Modal from "./components/Modal";
-import { fetchImages } from "./services/api";
-import { createGlobalStyle } from "styled-components";
-
-export const GlobalStyle = createGlobalStyle`
-  body {
-    margin: 0;
-    font-family: Arial, Helvetica, sans-serif;
-    background-color: #f5f6fa;
-  }
-
-  img {
-    display: block;
-    max-width: 100%;
-    height: auto;
-  }
-`;
+import { GlobalStyle } from "./styles/GlobalStyle";
 
 export default function App() {
-  const [images, setImages] = useState([]);
-  const [query, setQuery] = useState("");
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
+  const { images, loading, error, search, loadMore } = useImageSearch();
   const [modalData, setModalData] = useState(null);
-
-  useEffect(() => {
-    if (!query) return;
-
-    const loadImages = async () => {
-      try {
-        setLoading(true);
-        const newImages = await fetchImages(query, page);
-        setImages((prev) => [...prev, ...newImages]);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadImages();
-  }, [query, page]);
-
-  const handleSearch = useCallback((newQuery) => {
-    setQuery(newQuery);
-    setImages([]);
-    setPage(1);
-  }, []);
-
-  const loadMore = useCallback(() => {
-    setPage((p) => p + 1);
-  }, []);
 
   const openModal = useCallback((src, alt) => {
     setModalData({ src, alt });
@@ -62,12 +17,17 @@ export default function App() {
 
   const closeModal = useCallback(() => setModalData(null), []);
 
-  const showLoadMore = useMemo(() => images.length > 0 && !loading, [images, loading]);
+  const showLoadMore = useMemo(
+    () => images.length > 0 && !loading,
+    [images, loading]
+  );
 
   return (
-    <div>
-      <GlobalStyle/>
-      <Searchbar onSubmit={handleSearch} />
+    <>
+      <GlobalStyle />
+      <Searchbar onSubmit={search} />
+
+      {error && <p style={{ textAlign: "center" }}>{error}</p>}
 
       <ImageGallery images={images} onImageClick={openModal} />
 
@@ -78,6 +38,6 @@ export default function App() {
       {modalData && (
         <Modal src={modalData.src} alt={modalData.alt} onClose={closeModal} />
       )}
-    </div>
+    </>
   );
 }
